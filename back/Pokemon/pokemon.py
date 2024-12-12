@@ -13,24 +13,12 @@ app = FastAPI()
 
 @app.get("/api/pokemon/{pokemonName}")
 async def get_pokemon(pokemonName: str):
-    """
-    Fetches information about a Pokémon from the PokéAPI.
-
-    Args:
-        pokemonName: The name of the Pokémon to retrieve.
-
-    Returns:
-        A dictionary containing the Pokemon's name, image, type, and abilities.
-
-    Raises:
-        HTTPException: If the Pokémon is not found or there's an error fetching data.
-    """
 
     try:
         # Build the external API url
         url = f"https://pokeapi.co/api/v2/pokemon/{pokemonName}"
         response = requests.get(url)
-        response.raise_for_status()  # Raise an exception on unsuccessful request
+        response.raise_for_status() ## melhorar essa parte
 
         # Extract relevant data
         pokemon_data = response.json()
@@ -43,7 +31,7 @@ async def get_pokemon(pokemonName: str):
         return {
             "name": name,
             "image": image,
-            "type": ", ".join(types),  # Combine types into a comma-separated string
+            "type": ", ".join(types),  
             "abilities": abilities,
         }
 
