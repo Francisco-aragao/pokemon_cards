@@ -7,12 +7,11 @@ function SearchBar({ onSearch }) {
     e.preventDefault();
     if (input.trim()) {
       onSearch(input.trim().toLowerCase());
-      setInput('');
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className='search-bar-container'>
       <input 
         type="text" 
         placeholder="Search for a Pokémon..." 

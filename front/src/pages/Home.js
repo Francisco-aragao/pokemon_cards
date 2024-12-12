@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import Header from '../components/Header';
 import SearchBar from '../components/SearchBar';
 import PokemonCard from '../components/PokemonCard';
+import { fetchPokemon } from '../services/api'; 
 
 function Home() {
   const [pokemon, setPokemon] = useState(null);
 
   const handleSearch = async (pokemonName) => {
     try {
-      const response = await fetch(`/api/pokemon/${pokemonName}`);
-      const data = await response.json();
+      const data = await fetchPokemon(pokemonName);
       setPokemon(data);
     } catch (error) {
       console.error('Error fetching Pokémon data:', error);

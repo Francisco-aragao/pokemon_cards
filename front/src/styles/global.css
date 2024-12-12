@@ -52,3 +52,9 @@ body {
     text-transform: capitalize;
   }
   
+  .search-bar-container {
+    display: flex; /* Make it a flex container */
+    justify-content: center; /* Center content horizontally */
+    align-items: center;
+    padding: 1rem;
+  }
