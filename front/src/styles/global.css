@@ -58,3 +58,45 @@ body {
     align-items: center;
     padding: 1rem;
   }
+
+  .center-button {
+    display: block; /* Block ensures centering when using margin auto */
+    margin: 20px auto; /* Centers the button horizontally */
+    background-color: #3b4cca; /* Matches the header and buttons */
+    cursor: pointer; /* Shows a pointer on hover */
+  }
+
+  .center-button:hover {
+      background-color: #2b3a8a; /* Adds hover effect */
+  }
+
+  .center-login {
+    display: flex; /* Enables flexbox */
+    flex-direction: column; /* Aligns elements vertically */
+    justify-content: center; /* Centers content vertically */
+    align-items: center; /* Centers content horizontally */
+    margin: 0 auto; /* Ensures it's centered horizontally */
+  }
+  
+  .center-login div {
+    margin-bottom: 10px; /* Space between input fields */
+  }
+  
+  .center-login input {
+    padding: 10px;
+    border-radius: 4px;
+    width: 100%; /* Full width inside its container */
+  }
+  
+  .center-login-header {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center; /* Center align the text */
+  }
+  
+  .center-login-header h1 {
+    margin-bottom: 20px; /* Space between the title and the form */
+    color: #333; 
+  }

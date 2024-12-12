@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Header from '../components/Header';
 import SearchBar from '../components/SearchBar';
 import PokemonCard from '../components/PokemonCard';
+import NavigationButton from '../components/NavigationButton';
 import { fetchPokemon } from '../services/api'; 
 
 function Home() {
@@ -22,6 +23,7 @@ function Home() {
       <Header />
       <SearchBar onSearch={handleSearch} />
       {pokemon && <PokemonCard pokemon={pokemon} />}
+      <NavigationButton to="/login" label="Go to Login" />
     </div>
   );
 }
