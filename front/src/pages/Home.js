@@ -3,7 +3,7 @@ import Header from '../components/Header';
 import SearchBar from '../components/SearchBar';
 import PokemonCard from '../components/PokemonCard';
 import NavigationButton from '../components/NavigationButton';
-import { fetchPokemon } from '../services/api'; 
+import { fetchPokemon } from '../services/Api'; 
 
 function Home() {
   const [pokemon, setPokemon] = useState(null);
@@ -23,7 +23,8 @@ function Home() {
       <Header />
       <SearchBar onSearch={handleSearch} />
       {pokemon && <PokemonCard pokemon={pokemon} />}
-      <NavigationButton to="/login" label="Go to Login" />
+      <NavigationButton to="/login" label="Login" />
+      <NavigationButton to="/create" label="Create User" />
     </div>
   );
 }
