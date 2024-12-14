@@ -12,18 +12,17 @@ import { UserProvider } from './context/UserContext';
 function App() {
   return (
     <UserProvider>
-    <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/create" element={<Create />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/add-pokemon" element={<AddPokemon />} />
-        <Route path="/remove-pokemon" element={<RemovePokemon />} />
-        <Route path="/get-pokemons" element={<GetPokemons />} />
-        <Route path="/logout" element={<GetPokemons />} />
-      </Routes>
-    </Router>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/create" element={<Create />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/add-pokemon" element={<AddPokemon />} />
+          <Route path="/remove-pokemon" element={<RemovePokemon />} />
+          <Route path="/get-pokemons" element={<GetPokemons />} />
+        </Routes>
+      </Router>
     </UserProvider>
   );
 }

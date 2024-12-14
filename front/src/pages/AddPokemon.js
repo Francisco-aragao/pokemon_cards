@@ -15,7 +15,7 @@ function AddPokemon() {
             setPokemon(data);  // SALVO POKEMON EM UM estado
         } catch (error) {
             console.error('Error fetching Pokémon data:', error);
-            setPokemon(null);  
+            setPokemon(null);
         }
     };
 

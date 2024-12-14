@@ -7,7 +7,7 @@ import DashboardContent from '../components/DashboardContent';
 function Dashboard() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { username } = location.state || { username: ''};
+  const { username } = location.state || { username: '' };
 
   const handleNavigation = (route) => {
     navigate(route);

@@ -3,7 +3,7 @@ import Header from '../components/Header';
 import SearchBar from '../components/SearchBar';
 import PokemonCard from '../components/PokemonCard';
 import NavigationButton from '../components/NavigationButton';
-import { fetchPokemon } from '../services/Api'; 
+import { fetchPokemon } from '../services/Api';
 
 function Home() {
   const [pokemon, setPokemon] = useState(null);

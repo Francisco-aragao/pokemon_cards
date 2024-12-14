@@ -13,20 +13,20 @@ function CreateUserForm({ onLogin }) {
     <form onSubmit={handleSubmit} className="center-login">
       <div>
         <label>New Username:</label>
-        <input 
-          type="text" 
-          value={username} 
-          onChange={(e) => setUsername(e.target.value)} 
-          required 
+        <input
+          type="text"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
         />
       </div>
       <div>
         <label>New Password:</label>
-        <input 
-          type="password" 
-          value={password} 
-          onChange={(e) => setPassword(e.target.value)} 
-          required 
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
         />
       </div>
       <button type="submit">Create User</button>

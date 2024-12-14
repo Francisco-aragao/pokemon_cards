@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import CreateUserForm from '../components/CreateUserForm';
-import { UserContext } from '../context/UserContext'; 
+import { UserContext } from '../context/UserContext';
 import { createUser } from '../services/Api';
 
 function Login() {
@@ -14,7 +14,7 @@ function Login() {
             // await createUser(username, password); // CHAMAR API
             console.log('Create successful: ', username);
 
-            setUsername(username); 
+            setUsername(username);
 
             // Navigate to the dashboard with user details
             navigate('/dashboard', { state: { username, password } });

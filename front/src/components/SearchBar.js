@@ -12,11 +12,11 @@ function SearchBar({ onSearch }) {
 
   return (
     <form onSubmit={handleSubmit} className='search-bar-container'>
-      <input 
-        type="text" 
-        placeholder="Search for a Pokémon..." 
-        value={input} 
-        onChange={(e) => setInput(e.target.value)} 
+      <input
+        type="text"
+        placeholder="Search for a Pokémon..."
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
       />
       <button type="submit">Search</button>
     </form>

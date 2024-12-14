@@ -22,7 +22,7 @@ function GetPokemons() {
     };
 
     loadPokemons();
-  }, [username]); 
+  }, [username]);
 
   if (error) {
     return <div>Error: {error}</div>;
@@ -33,9 +33,9 @@ function GetPokemons() {
       <Header />
       <h1 className="center-login-header">All Pokémon</h1>
       <div>
-      {pokemons.map((pokemon) => (
-          <PokemonCard pokemon={pokemon} /> 
-        ))}  
+        {pokemons.map((pokemon) => (
+          <PokemonCard pokemon={pokemon} />
+        ))}
       </div>
     </div>
   );
