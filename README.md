@@ -1,11 +1,11 @@
 # pokemon_cards
 
-1. Team
+## Team
 
 - Francisco Teixeira Rocha Aragão 2021031726
 - Gabriel Pains de Oliveira Cardoso 2021096887
 
-2. Description
+## Description
 
 This project is a web application that allows users to create an account, login, and manage their Pokemon cards. The user can add, remove and see all his cards.
 
@@ -27,11 +27,11 @@ The back contains the database management and the API code. The database is mana
 
 The root contains .github/workflows, which contains the configuration file to use the GitHub Actions. The GitHub Actions are used to run the tests for the back end. The tests are run every time a push is made to the repository.
 
-3. How to run
+## How to run
 
 **Important** = To run the code, it is necessary to run the front and back separately. 
 
-## Front
+### Front
 
 ```cd front```
 
@@ -39,7 +39,7 @@ The root contains .github/workflows, which contains the configuration file to us
 
 ``` npm start ``` -> will be running on port 3000
 
-## Back
+### Back
 
 ```cd back```
 
@@ -53,7 +53,7 @@ The root contains .github/workflows, which contains the configuration file to us
 
 ``` uvicorn pokemon:app --reload ``` -> will be running on port 8000
 
-## Tests
+### Tests
 
 Follow the same steps as the back (to run the tests, the back end must be running)
 
