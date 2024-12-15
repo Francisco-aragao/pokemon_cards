@@ -1,51 +1,181 @@
-from fastapi import FastAPI, HTTPException
+import os
+import sqlite3
+
 import requests
-import sqlite3 
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-### SETUP
+### FAST API SETUP
 
 app = FastAPI()
 
-""" app.add_middleware(
+app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Update to allow requests from your React frontend
+    allow_origins=["http://localhost:3000/"],
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-) """
+    allow_methods=[""],
+    allow_headers=[""],
+)
 
-# Connect to SQLite database (it will create db.sqlite if it doesn't exist)
-conn = sqlite3.connect('db.sqlite')
+### DATABASE SETUP
 
-cursor = conn.cursor()
 
-# Create tables (but not overwrite)
-cursor.execute('''
-    CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        username TEXT NOT NULL,
-        password TEXT NOT NULL
-    )
-''')
+class DatabaseHandler:
+    def __init__(self, filename: str):
+        self.filename = filename
 
-cursor.execute('''
-    CREATE TABLE IF NOT EXISTS pokemons (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER,
-        name TEXT NOT NULL,
-        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-    )
-''')
+        self.conn = sqlite3.connect(filename)
+        self.cursor = self.conn.cursor()
 
-conn.commit()
+        self.initTables()
+
+    def __del__(self):
+        self.conn.close()
+
+    def initTables(self):
+        # Create tables (but not overwrite)
+        self.cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT NOT NULL,
+                password TEXT NOT NULL
+            )
+        """
+        )
+
+        self.cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS pokemons (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER,
+                name TEXT NOT NULL,
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+            )
+        """
+        )
+
+        self.conn.commit()
+
+    def initTestDatabase(self):
+        if self.conn:
+            self.conn.close()
+
+        self.conn = sqlite3.connect(":memory:")
+        self.cursor = self.conn.cursor()
+
+        self.initTables()
+
+    def addUser(self, username: str, password: str) -> None:
+        self.cursor.execute(
+            """
+            INSERT INTO users (username, password)
+            VALUES (?, ?)
+        """,
+            (username, password),
+        )
+
+        self.conn.commit()
+
+    def removeUser(self, username: str) -> None:
+        self.cursor.execute(
+            """
+            DELETE FROM users
+            WHERE username = ?
+        """,
+            (username,),
+        )
+
+        self.conn.commit()
+
+    def getUserId(self, username: str) -> int | None:
+        self.cursor.execute(
+            """
+            SELECT id
+            FROM users
+            WHERE username = ?
+        """,
+            (username,),
+        )
+
+        user_id = self.cursor.fetchone()
+
+        return user_id
+
+    def getUserIdWithPassword(self, username: str, password: str) -> int | None:
+        self.cursor.execute(
+            """
+            SELECT id
+            FROM users
+            WHERE username = ? AND password = ?
+        """,
+            (username, password),
+        )
+
+        user_id = self.cursor.fetchone()
+
+        return user_id
+
+    def addPokemon(self, user_id: int, pokemon_name: str) -> None:
+        self.cursor.execute(
+            """
+            INSERT INTO pokemons (user_id, name)
+            VALUES (?, ?)
+        """,
+            (user_id, pokemon_name),
+        )
+
+        self.conn.commit()
+
+    def removePokemon(self, user_id: int, pokemon_name: str) -> None:
+        self.cursor.execute(
+            """
+            DELETE FROM pokemons
+            WHERE user_id = ? AND name = ?
+        """,
+            (user_id, pokemon_name),
+        )
+
+        self.conn.commit()
+
+    def getSinglePokemon(self, user_id: int, pokemon_name: str) -> int | None:
+        self.cursor.execute(
+            """
+            SELECT id
+            FROM pokemons
+            WHERE user_id = ? AND name = ?
+        """,
+            (user_id, pokemon_name),
+        )
+
+        pokemon_id = self.cursor.fetchone()
+
+        return pokemon_id
+
+    def getAllPokemons(self, user_id: int) -> list[str]:
+        self.cursor.execute(
+            """
+            SELECT name
+            FROM pokemons
+            WHERE user_id = ?
+        """,
+            (user_id,),
+        )
+
+        pokemons = self.cursor.fetchall()
+
+        return pokemons
+
+
+db = DatabaseHandler("pokemon.db")
 
 ### HELPER
 
-def get_pokemon_data(pokemonName: str) -> dict[str, str]:
+
+def get_pokemon_data(pokemon_name: str) -> dict[str, str]:
     # Build the external API url
-    url = f"https://pokeapi.co/api/v2/pokemon/{pokemonName}"
+    url = f"https://pokeapi.co/api/v2/pokemon/{pokemon_name}"
 
     try:
         response = requests.get(url, timeout=5)
@@ -55,43 +185,42 @@ def get_pokemon_data(pokemonName: str) -> dict[str, str]:
         name = pokemon_data["name"]
         image = pokemon_data["sprites"]["front_default"]
         types = [type["type"]["name"] for type in pokemon_data["types"]]
-        abilities = [ability["ability"]["name"] for ability in pokemon_data["abilities"]]
+        abilities = [
+            ability["ability"]["name"] for ability in pokemon_data["abilities"]
+        ]
 
-        content =  {
+        content = {
             "name": name,
             "image": image,
-            "type": ", ".join(types),  
+            "type": ", ".join(types),
             "abilities": abilities,
         }
 
         return content
-    
+
     except requests.exceptions.RequestException as error:
-        raise HTTPException(status_code=500, detail=f"Error fetching Pokémon data: {error}")
+        raise HTTPException(
+            status_code=500, detail=f"Error fetching Pokémon data: {error}"
+        )
     except:
         raise HTTPException(status_code=404, detail="Pokémon not found")
 
+
 ### START OF THE API
 
-@app.get("/api/pokemon/{pokemonName}")
-async def get_pokemon(pokemonName: str) -> dict[str, str]:
-    content = get_pokemon_data(pokemonName)
+
+@app.get("/api/pokemon/{pokemon_name}")
+async def get_pokemon(pokemon_name: str) -> dict[str, str]:
+    content = get_pokemon_data(pokemon_name)
     return JSONResponse(content=content)
 
 
 @app.post("/api/login")
 async def login(user: dict) -> bool:
-
     username = user.get("username", "")
     password = user.get("password", "")
 
-    cursor.execute('''
-        SELECT id
-        FROM users
-        WHERE username = ? AND password = ?
-    ''', (username, password))
-
-    user_id = cursor.fetchone()
+    user_id = db.getUserIdWithPassword(username, password)
 
     if user_id is None:
         raise HTTPException(status_code=401, detail="Invalid username or password")
@@ -101,156 +230,90 @@ async def login(user: dict) -> bool:
 
 @app.post("/api/createUser")
 async def create_user(user: dict) -> bool:
-
     username = user.get("username", "")
     password = user.get("password", "")
 
     if username == "" or password == "":
         raise HTTPException(status_code=400, detail="Empty fields")
-    
-    # Check if user exists
-    cursor.execute('''
-        SELECT id
-        FROM users
-        WHERE username = ?
-    ''', (username,))
 
-    user_id = cursor.fetchone()
+    # Check if user exists
+    user_id = db.getUserId(username)
 
     if user_id is not None:
         raise HTTPException(status_code=400, detail="Username already exists")
-    
-    # All OK
-    cursor.execute('''
-        INSERT INTO users (username, password)
-        VALUES (?, ?)
-    ''', (username, password))
 
-    conn.commit()
+    # All OK
+    db.addUser(username, password)
 
     return True
 
 
-@app.post("/api/addPokemon/{pokemonName}")
-async def add_pokemon(pokemonName: str, user: dict) -> bool:
-
+@app.post("/api/addPokemon/{pokemon_name}")
+async def add_pokemon(pokemon_name: str, user: dict) -> bool:
     username = user.get("username", "")
 
-    cursor.execute('''
-        SELECT id
-        FROM users
-        WHERE username = ?
-    ''', (username,))
-
-    # Check user
-    user_id = cursor.fetchone()
+    user_id = db.getUserId(username)
 
     if user_id is None:
         raise HTTPException(status_code=401, detail="Invalid username")
-    
-    # Check if pokemon exists on pokeapi
 
+    # Check if pokemon exists on pokeapi
     try:
-        get_pokemon_data(pokemonName)
+        get_pokemon_data(pokemon_name)
     except HTTPException as error:
         raise error
 
     # Check if pokemon already exists for this user
-    cursor.execute('''
-        SELECT id
-        FROM pokemons
-        WHERE user_id = ? AND name = ?
-    ''', (user_id[0], pokemonName))
-
-    pokemon_id = cursor.fetchone()
+    pokemon_id = db.getSinglePokemon(user_id[0], pokemon_name)
 
     if pokemon_id is not None:
         raise HTTPException(status_code=400, detail="Pokemon already added")
-    
-    # All OK
-    cursor.execute('''
-        INSERT INTO pokemons (user_id, name)
-        VALUES (?, ?)
-    ''', (user_id[0], pokemonName))
 
-    conn.commit()
+    # All OK
+    db.addPokemon(user_id[0], pokemon_name)
 
     return True
 
 
-@app.delete("/api/removePokemon/{pokemonName}")
-async def remove_pokemon(pokemonName: str, user: dict) -> bool:
-
+@app.delete("/api/removePokemon/{pokemon_name}")
+async def remove_pokemon(pokemon_name: str, user: dict) -> bool:
     username = user.get("username", "")
 
-    cursor.execute('''
-        SELECT id
-        FROM users
-        WHERE username = ?
-    ''', (username,))
-
-    # Check user
-    user_id = cursor.fetchone()
+    user_id = db.getUserId(username)
 
     if user_id is None:
         raise HTTPException(status_code=401, detail="Invalid username")
-    
-    # Check if pokemon exists for this user
-    cursor.execute('''
-        SELECT id
-        FROM pokemons
-        WHERE user_id = ? AND name = ?
-    ''', (user_id[0], pokemonName))
 
-    pokemon_id = cursor.fetchone()
+    # Check if pokemon exists for this user
+    pokemon_id = db.getSinglePokemon(user_id[0], pokemon_name)
 
     if pokemon_id is None:
         raise HTTPException(status_code=400, detail="Pokemon not found")
-    
-    # All OK
-    cursor.execute('''
-        DELETE FROM pokemons
-        WHERE user_id = ? AND name = ?
-    ''', (user_id[0], pokemonName))
 
-    conn.commit()
+    # All OK
+    db.removePokemon(user_id[0], pokemon_name)
 
     return True
 
 
 @app.get("/api/getPokemons/{username}")
 async def get_pokemons(username: str) -> list[dict[str, str]]:
-
-    cursor.execute('''
-        SELECT id
-        FROM users
-        WHERE username = ?
-    ''', (username,))
-
-    # Check user
-    user_id = cursor.fetchone()
+    user_id = db.getUserId(username)
 
     if user_id is None:
-        raise HTTPException(status_code=401, detail="Invalid username")
-    
-    # Get pokemons
-    cursor.execute('''
-        SELECT name
-        FROM pokemons
-        WHERE user_id = ?
-    ''', (user_id[0],))
+        raise HTTPException(status_code=400, detail="Invalid username")
 
-    pokemons = cursor.fetchall()
+    # Get pokemons
+    pokemons = db.getAllPokemons(user_id[0])
 
     try:
         content = []
+
         for pokemon in pokemons:
-            print(pokemon[0])
             p = get_pokemon_data(pokemon[0])
-            print(p)
             content.append(p)
 
-        print(content)
         return JSONResponse(content=content)
+
     except HTTPException as error:
         raise error
