@@ -21,12 +21,12 @@
 
 **OK**
 - Add pokemon to user: POST http://localhost:8000/api/addPokemon/${pokemonName} (request external pokemon api)
-  - Receives: BODY -> Username, Pokemon Name
+  - Receives: BODY -> Username
   - Returns: Bool
 
 **OK**
-- Remove pokemon from user: DELETE http://localhost:8000/api/removePokemon
-  - Receives: BODY -> Username, Pokemon Name
+- Remove pokemon from user: DELETE http://localhost:8000/api/removePokemon/${pokemonName}
+  - Receives: BODY -> Username
   - Returns: Bool
 
 **OK**

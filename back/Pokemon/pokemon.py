@@ -1,10 +1,20 @@
 from fastapi import FastAPI, HTTPException
 import requests
 import sqlite3 
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
 ### SETUP
 
 app = FastAPI()
+
+""" app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # Update to allow requests from your React frontend
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+) """
 
 # Connect to SQLite database (it will create db.sqlite if it doesn't exist)
 conn = sqlite3.connect('db.sqlite')
@@ -47,12 +57,15 @@ def get_pokemon_data(pokemonName: str) -> dict[str, str]:
         types = [type["type"]["name"] for type in pokemon_data["types"]]
         abilities = [ability["ability"]["name"] for ability in pokemon_data["abilities"]]
 
-        return {
+        content =  {
             "name": name,
             "image": image,
             "type": ", ".join(types),  
             "abilities": abilities,
         }
+
+        return content
+    
     except requests.exceptions.RequestException as error:
         raise HTTPException(status_code=500, detail=f"Error fetching Pokémon data: {error}")
     except:
@@ -62,11 +75,16 @@ def get_pokemon_data(pokemonName: str) -> dict[str, str]:
 
 @app.get("/api/pokemon/{pokemonName}")
 async def get_pokemon(pokemonName: str) -> dict[str, str]:
-    return get_pokemon_data(pokemonName)
+    content = get_pokemon_data(pokemonName)
+    return JSONResponse(content=content)
 
 
 @app.post("/api/login")
-async def login(username: str, password: str) -> bool:
+async def login(user: dict) -> bool:
+
+    username = user.get("username", "")
+    password = user.get("password", "")
+
     cursor.execute('''
         SELECT id
         FROM users
@@ -82,7 +100,11 @@ async def login(username: str, password: str) -> bool:
 
 
 @app.post("/api/createUser")
-async def create_user(username: str, password: str) -> bool:
+async def create_user(user: dict) -> bool:
+
+    username = user.get("username", "")
+    password = user.get("password", "")
+
     if username == "" or password == "":
         raise HTTPException(status_code=400, detail="Empty fields")
     
@@ -110,7 +132,10 @@ async def create_user(username: str, password: str) -> bool:
 
 
 @app.post("/api/addPokemon/{pokemonName}")
-async def add_pokemon(username: str, pokemonName: str) -> bool:
+async def add_pokemon(pokemonName: str, user: dict) -> bool:
+
+    username = user.get("username", "")
+
     cursor.execute('''
         SELECT id
         FROM users
@@ -124,6 +149,7 @@ async def add_pokemon(username: str, pokemonName: str) -> bool:
         raise HTTPException(status_code=401, detail="Invalid username")
     
     # Check if pokemon exists on pokeapi
+
     try:
         get_pokemon_data(pokemonName)
     except HTTPException as error:
@@ -152,8 +178,11 @@ async def add_pokemon(username: str, pokemonName: str) -> bool:
     return True
 
 
-@app.delete("/api/removePokemon")
-async def remove_pokemon(username: str, pokemonName: str) -> bool:
+@app.delete("/api/removePokemon/{pokemonName}")
+async def remove_pokemon(pokemonName: str, user: dict) -> bool:
+
+    username = user.get("username", "")
+
     cursor.execute('''
         SELECT id
         FROM users
@@ -191,6 +220,7 @@ async def remove_pokemon(username: str, pokemonName: str) -> bool:
 
 @app.get("/api/getPokemons/{username}")
 async def get_pokemons(username: str) -> list[dict[str, str]]:
+
     cursor.execute('''
         SELECT id
         FROM users
@@ -213,6 +243,14 @@ async def get_pokemons(username: str) -> list[dict[str, str]]:
     pokemons = cursor.fetchall()
 
     try:
-        return [get_pokemon_data(pokemon[0]) for pokemon in pokemons]
+        content = []
+        for pokemon in pokemons:
+            print(pokemon[0])
+            p = get_pokemon_data(pokemon[0])
+            print(p)
+            content.append(p)
+
+        print(content)
+        return JSONResponse(content=content)
     except HTTPException as error:
         raise error

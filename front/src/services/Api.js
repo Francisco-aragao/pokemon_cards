@@ -1,10 +1,23 @@
 export const fetchPokemon = async (pokemonName) => {
   try {
-    const response = await fetch(`http://localhost:8000/api/pokemon/${pokemonName}`);
+    const response = await fetch(`http://localhost:8000/api/pokemon/${pokemonName}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch Pokémon.');
+    }
+
+    console.log('OI')
     const data = await response.json();
+    console.log('Data ', data)
     return data;
   } catch (error) {
     console.error('Error fetching Pokémon data:', error);
+    alert('Error fetching Pokémon data');
     throw error;
   }
 };
@@ -66,18 +79,25 @@ export const createUser = async (username, password) => {
 };
 
 export const addPokemon = async (pokemonName, username) => {
+  console.log(username)
   try {
     const response = await fetch(`http://localhost:8000/api/addPokemon/${pokemonName}`, {
-      melhot: 'POST',
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ username }),
     });
+
+    if (!response.ok) {
+      throw new Error('Failed to add Pokémon.');
+    }
+
     const data = await response.json();
     return data;
   } catch (error) {
     console.error('Error fetching Pokémon data:', error);
+    alert('Error fetching Pokémon data');
     throw error;
   }
 };
@@ -85,36 +105,44 @@ export const addPokemon = async (pokemonName, username) => {
 export const removePokemon = async (pokemonName, username) => {
   try {
     const response = await fetch(`http://localhost:8000/api/removePokemon/${pokemonName}`, {
-      melhot: 'DELETE',
+      method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ username }),
     });
+    
+    if (!response.ok) {
+      throw new Error('Failed to add Pokémon.');
+    }
+
     const data = await response.json();
     return data;
   } catch (error) {
     console.error('Error fetching Pokémon data:', error);
+    alert('Error fetching Pokémon data');
     throw error;
   }
 };
 
 export const getPokemons = async (username) => {
   try {
-    const response = await fetch(`http://localhost:8000/api/getPokemons/`, {
+    const response = await fetch(`http://localhost:8000/api/getPokemons/${username}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ username }),
     });
+    
     if (!response.ok) {
       throw new Error('Failed to fetch Pokémon.');
     }
+    
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error fetching user Pokémon:', error);
+    console.error('Error fetching Pokémon data:', error);
+    alert('Error fetching Pokémon data');
     throw error;
   }
 };

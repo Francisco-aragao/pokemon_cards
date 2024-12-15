@@ -6,25 +6,25 @@ import { UserContext } from '../context/UserContext';
 
 function RemovePokemon() {
     const [pokemon, setPokemon] = useState(null);
+    const [successMessage, setSuccessMessage] = useState(''); // New state to control the success message
     const { username } = useContext(UserContext);
 
     const handleSearch = async (pokemonName) => {
         try {
-            // const data = await removePokemon(pokemonName, username); //API
-            setPokemon(data);
+            const sucess = await removePokemon(pokemonName, username); //API
+
+            if (!sucess) {
+                throw new Error('Failed to remove Pokémon.');
+            }
+            setPokemon({ name: pokemonName });
+            setSuccessMessage(`Success! Pokémon "${pokemonName}" has been removed.`);
         } catch (error) {
             console.error('Error fetching Pokémon data:', error);
             setPokemon(null);
+            setSuccessMessage('Failed to remove Pokémon. Please try again.');
         }
     };
 
-    const handleRemovePokemon = () => {
-        if (pokemon) {
-            console.log(`Removing Pokémon: ${pokemon.name}`);
-        } else {
-            console.error('No Pokémon to remove!');
-        }
-    };
 
     return (
         <div>
@@ -33,8 +33,8 @@ function RemovePokemon() {
             <SearchBar onSearch={handleSearch} />
             {pokemon && (
                 <div>
-                    <h2>{pokemon.name}</h2>
-                    <button onClick={handleRemovePokemon}>Remove Pokémon</button>
+                    <p style={{ textAlign: 'center' }}>
+                        {successMessage}</p> {/* Show the success message here */}
                 </div>
             )}
         </div>

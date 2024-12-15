@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import Header from '../components/Header';
 import { getPokemons } from '../services/Api'; // Import the API function
 import { UserContext } from '../context/UserContext'; // Import context
+import PokemonCard from '../components/PokemonCard';
 
 function GetPokemons() {
   const [pokemons, setPokemons] = useState([]);
@@ -12,7 +13,7 @@ function GetPokemons() {
   useEffect(() => {
     const loadPokemons = async () => {
       try {
-        //const data = await getPokemons(username); // API
+        const data = await getPokemons(username); // API
         setPokemons(data);
       } catch (err) {
         setError('Failed to fetch Pokémon.');
@@ -33,8 +34,8 @@ function GetPokemons() {
       <Header />
       <h1 className="center-login-header">All Pokémon</h1>
       <div>
-        {pokemons.map((pokemon) => (
-          <PokemonCard pokemon={pokemon} />
+        {pokemons.map((pokemon, index) => (
+          <PokemonCard key={pokemon.name || index} pokemon={pokemon} />
         ))}
       </div>
     </div>

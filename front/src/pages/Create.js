@@ -11,7 +11,7 @@ function Login() {
 
     const handleCreateUser = async (username, password) => {
         try {
-            // await createUser(username, password); // CHAMAR API
+            await createUser(username, password); // CHAMAR API
             console.log('Create successful: ', username);
 
             setUsername(username);

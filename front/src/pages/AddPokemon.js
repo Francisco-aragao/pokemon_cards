@@ -6,24 +6,22 @@ import { UserContext } from '../context/UserContext';
 
 function AddPokemon() {
     const [pokemon, setPokemon] = useState(null);
+    const [successMessage, setSuccessMessage] = useState(''); // New state to control the success message
     const { username } = useContext(UserContext);
 
     const handleSearch = async (pokemonName) => {
         try {
+            const sucess = await addPokemon(pokemonName, username); // Call API to add the Pokémon
 
-            // const data = await addPokemon(pokemonName); // call api
-            setPokemon(data);  // SALVO POKEMON EM UM estado
+            if (!sucess) {
+                throw new Error('Failed to add Pokémon.');
+            }
+            setPokemon({ name: pokemonName });
+            setSuccessMessage(`Success! Pokémon "${pokemonName}" has been added.`);
         } catch (error) {
             console.error('Error fetching Pokémon data:', error);
             setPokemon(null);
-        }
-    };
-
-    const handleAddPokemon = () => {
-        if (pokemon) {
-            console.log(`Adding Pokémon: ${pokemon.name}`);
-        } else {
-            console.error('No Pokémon to add!');
+            setSuccessMessage('Failed to add Pokémon. Please try again.');
         }
     };
 
@@ -34,8 +32,8 @@ function AddPokemon() {
             <SearchBar onSearch={handleSearch} />
             {pokemon && (
                 <div>
-                    <h2>{pokemon.name}</h2>
-                    <button onClick={handleAddPokemon}>Add Pokémon</button>
+                    <p style={{ textAlign: 'center' }}>
+                        {successMessage}</p> {/* Show the success message here */}
                 </div>
             )}
         </div>

@@ -11,7 +11,7 @@ function Login() {
 
   const handleLogin = async (username, password) => {
     try {
-      // await loginUser(username, password); // Call the API function
+      await loginUser(username, password); // Call the API function
       console.log('Login successful: ', username);
 
       setUsername(username); // Store username in context
