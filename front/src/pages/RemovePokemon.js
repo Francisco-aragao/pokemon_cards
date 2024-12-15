@@ -35,7 +35,7 @@ function RemovePokemon() {
                 <div>
                     <p style={{ textAlign: 'center' }}>
                         {successMessage}</p> {/* Show the success message here */}
-                </div>
+                </div>            
             )}
         </div>
     );

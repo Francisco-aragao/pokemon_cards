@@ -8,6 +8,7 @@ import AddPokemon from './pages/AddPokemon';
 import RemovePokemon from './pages/RemovePokemon';
 import GetPokemons from './pages/GetPokemons';
 import { UserProvider } from './context/UserContext';
+import PrivateRoute from './components/PrivateRoute'; // Import the PrivateRoute component
 
 function App() {
   return (
@@ -17,10 +18,40 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/create" element={<Create />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/add-pokemon" element={<AddPokemon />} />
-          <Route path="/remove-pokemon" element={<RemovePokemon />} />
-          <Route path="/get-pokemons" element={<GetPokemons />} />
+
+          {/* Protected Routes */}
+          <Route 
+            path="/dashboard" 
+            element={
+              <PrivateRoute>
+                <Dashboard />
+              </PrivateRoute>
+            } 
+          />
+          <Route 
+            path="/add-pokemon" 
+            element={
+              <PrivateRoute>
+                <AddPokemon />
+              </PrivateRoute>
+            } 
+          />
+          <Route 
+            path="/remove-pokemon" 
+            element={
+              <PrivateRoute>
+                <RemovePokemon />
+              </PrivateRoute>
+            } 
+          />
+          <Route 
+            path="/get-pokemons" 
+            element={
+              <PrivateRoute>
+                <GetPokemons />
+              </PrivateRoute>
+            } 
+          />
         </Routes>
       </Router>
     </UserProvider>

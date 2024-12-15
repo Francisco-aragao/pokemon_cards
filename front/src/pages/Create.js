@@ -5,7 +5,7 @@ import CreateUserForm from '../components/CreateUserForm';
 import { UserContext } from '../context/UserContext';
 import { createUser } from '../services/Api';
 
-function Login() {
+function Create() {
     const navigate = useNavigate();
     const { setUsername } = useContext(UserContext);
 
@@ -27,10 +27,10 @@ function Login() {
     return (
         <div>
             <Header />
-            <h1 className="center-login-header">Login</h1>
+            <h1 className="center-login-header">Create User</h1>
             <CreateUserForm onLogin={handleCreateUser} />
         </div>
     );
 }
 
-export default Login;
+export default Create;
