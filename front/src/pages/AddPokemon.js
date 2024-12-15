@@ -1,21 +1,23 @@
 import React, { useState, useContext } from 'react';
 import Header from '../components/Header';
 import SearchBar from '../components/SearchBar';
-import { addPokemon } from '../services/Api'; // Ensure this function is properly defined and imported
+import { addPokemon } from '../services/Api'; 
 import { UserContext } from '../context/UserContext';
 
 function AddPokemon() {
     const [pokemon, setPokemon] = useState(null);
-    const [successMessage, setSuccessMessage] = useState(''); // New state to control the success message
+    const [successMessage, setSuccessMessage] = useState(''); 
     const { username } = useContext(UserContext);
 
     const handleSearch = async (pokemonName) => {
         try {
-            const sucess = await addPokemon(pokemonName, username); // Call API to add the Pokémon
+            const sucess = await addPokemon(pokemonName, username);
 
             if (!sucess) {
                 throw new Error('Failed to add Pokémon.');
             }
+
+            // set usefull info in the state
             setPokemon({ name: pokemonName });
             setSuccessMessage(`Success! Pokémon "${pokemonName}" has been added.`);
         } catch (error) {
@@ -33,7 +35,7 @@ function AddPokemon() {
             {pokemon && (
                 <div>
                     <p style={{ textAlign: 'center' }}>
-                        {successMessage}</p> {/* Show the success message here */}
+                        {successMessage}</p> {}
                 </div>
             )}
         </div>

@@ -6,12 +6,12 @@ import { UserContext } from '../context/UserContext';
 
 function RemovePokemon() {
     const [pokemon, setPokemon] = useState(null);
-    const [successMessage, setSuccessMessage] = useState(''); // New state to control the success message
+    const [successMessage, setSuccessMessage] = useState(''); 
     const { username } = useContext(UserContext);
 
     const handleSearch = async (pokemonName) => {
         try {
-            const sucess = await removePokemon(pokemonName, username); //API
+            const sucess = await removePokemon(pokemonName, username);
 
             if (!sucess) {
                 throw new Error('Failed to remove Pokémon.');
@@ -34,7 +34,7 @@ function RemovePokemon() {
             {pokemon && (
                 <div>
                     <p style={{ textAlign: 'center' }}>
-                        {successMessage}</p> {/* Show the success message here */}
+                        {successMessage}</p> {}
                 </div>            
             )}
         </div>

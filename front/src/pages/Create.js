@@ -11,12 +11,11 @@ function Create() {
 
     const handleCreateUser = async (username, password) => {
         try {
-            await createUser(username, password); // CHAMAR API
+            await createUser(username, password); 
             console.log('Create successful: ', username);
 
             setUsername(username);
 
-            // Navigate to the dashboard with user details
             navigate('/dashboard', { state: { username, password } });
         } catch (error) {
             console.error('Create failed:', error.message);

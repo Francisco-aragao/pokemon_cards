@@ -7,6 +7,7 @@ import DashboardContent from '../components/DashboardContent';
 function Dashboard() {
   const location = useLocation();
   const navigate = useNavigate();
+  // get the username from the state (if exists)
   const { username } = location.state || { username: '' };
 
   const handleNavigation = (route) => {

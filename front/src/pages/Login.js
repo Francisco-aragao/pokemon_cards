@@ -11,7 +11,7 @@ function Login() {
 
   const handleLogin = async (username, password) => {
     try {
-      await loginUser(username, password); // Call the API function
+      await loginUser(username, password); 
       console.log('Login successful: ', username);
 
       setUsername(username); // Store username in context
@@ -20,7 +20,7 @@ function Login() {
       navigate('/dashboard', { state: { username, password } });
     } catch (error) {
       console.error('Login failed:', error.message);
-      alert(error.message); // Display the error message to the user
+      alert(error.message); 
     }
   };
 
