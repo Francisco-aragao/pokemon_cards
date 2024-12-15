@@ -62,7 +62,7 @@ class DatabaseHandler:
         if self.conn:
             self.conn.close()
 
-        self.conn = sqlite3.connect(":memory:")
+        self.conn = sqlite3.connect(":memory:", check_same_thread=False)
         self.cursor = self.conn.cursor()
 
         self.initTables()

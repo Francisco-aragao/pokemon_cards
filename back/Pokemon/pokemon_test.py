@@ -127,14 +127,16 @@ class TestRemovePokemon(unittest.TestCase):
     @classmethod
     def setUpClass(self):
         db.addUser("joao", "1234")
-        db.addPokemon(1, "pikachu")
+        id_user = db.getUserId("joao")
+        id_user = id_user[0]
+        db.addPokemon(id_user, "onix")
 
     @classmethod
     def tearDownClass(self):
         db.removeUser("joao")
 
     def test_remove_pokemon(self):
-        result = asyncio.run(remove_pokemon("pikachu", {"username": "joao"}))
+        result = asyncio.run(remove_pokemon("onix", {"username": "joao"}))
 
         self.assertEqual(result, True)
 
@@ -156,21 +158,32 @@ class TestGetPokemons(unittest.TestCase):
     @classmethod
     def setUpClass(self):
         db.addUser("joao", "1234")
-        db.addPokemon(1, "pikachu")
-        db.addPokemon(1, "onix")
+        id_user = db.getUserId("joao")
+        id_user = id_user[0]
+        db.addPokemon(id_user, "pikachu")
+        db.addPokemon(id_user, "onix")
+        self.client = TestClient(app)
 
     @classmethod
     def tearDownClass(self):
         db.removeUser("joao")
 
     def test_get_pokemons(self):
-        result = asyncio.run(get_pokemons("joao"))
 
-        self.assertEqual(result, ["pikachu", "onix"])
+        response = self.client.get("/api/getPokemons/joao")
+
+        json = response.json()
+        
+        self.assertEqual(json[0]["name"], "pikachu")
+        self.assertEqual(json[0].keys(), {"name", "image", "type", "abilities"})
+        self.assertEqual(json[1]["name"], "onix")
+        self.assertEqual(json[1].keys(), {"name", "image", "type", "abilities"})
+        self.assertEqual(response.status_code, 200)
 
     def test_get_pokemons_invalid_user(self):
         with self.assertRaises(HTTPException):
             asyncio.run(get_pokemons("noone"))
+
 
 
 if __name__ == "__main__":
