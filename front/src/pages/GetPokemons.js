@@ -6,7 +6,6 @@ import PokemonCard from '../components/PokemonCard';
 
 function GetPokemons() {
   const [pokemons, setPokemons] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { username } = useContext(UserContext);
 
@@ -15,11 +14,9 @@ function GetPokemons() {
       try {
         const data = await getPokemons(username); // API
         setPokemons(data);
-      } catch (err) {
-        setError('Failed to fetch Pokémon.');
-      } finally {
-        setLoading(false);
-      }
+      } catch (error) {
+        console.log('Error fetching Pokémon data:', error);
+      } 
     };
 
     loadPokemons();

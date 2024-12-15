@@ -74,6 +74,7 @@ export const createUser = async (username, password) => {
     return;
   } catch (error) {
     console.error('Error: create user', error);
+    alert('Error fetching Pokémon data:', error);
     throw error;
   }
 };
@@ -97,7 +98,7 @@ export const addPokemon = async (pokemonName, username) => {
     return data;
   } catch (error) {
     console.error('Error fetching Pokémon data:', error);
-    alert('Error fetching Pokémon data');
+    alert('Error fetching Pokémon data:', error);
     throw error;
   }
 };
@@ -120,7 +121,7 @@ export const removePokemon = async (pokemonName, username) => {
     return data;
   } catch (error) {
     console.error('Error fetching Pokémon data:', error);
-    alert('Error fetching Pokémon data');
+    alert('Error fetching Pokémon data:', error);
     throw error;
   }
 };
@@ -142,7 +143,7 @@ export const getPokemons = async (username) => {
     return data;
   } catch (error) {
     console.error('Error fetching Pokémon data:', error);
-    alert('Error fetching Pokémon data');
+    alert('Error fetching Pokémon data:', error);
     throw error;
   }
 };

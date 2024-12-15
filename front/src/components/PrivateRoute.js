@@ -1,18 +1,17 @@
-// src/components/PrivateRoute.js
 import React, { useContext } from 'react';
 import { Navigate } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
 
-function PrivateRoute({ page }) {
-    const { username } = useContext(UserContext);
+function PrivateRoute({ children }) {
+    const { username } = useContext(UserContext); // Assuming username indicates login status
 
-
-    // this route is to avoid unauthorized access to the dashboard
+    // If the user is not logged in (no username), redirect to login page
     if (!username) {
-        return <Navigate to="/login" replace />;
+        return <Navigate to="/login" />;
     }
 
-    return page;
+    // If the user is logged in, render the protected component (children)
+    return children;
 }
 
 export default PrivateRoute;
